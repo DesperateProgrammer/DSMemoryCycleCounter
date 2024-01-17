@@ -28,7 +28,10 @@ void RunGBARAMTests()
   UnlockAllDCache() ;
   UnlockAllICache() ;
   
-  CP15_SetRegion6(0x08000035); // 128MB
+  SetFastClock(true);
+  if (GetCPUClockMultiplier() == 4)
+    CP15_SetRegion6(0x08000035); // 128MB
+
   sysSetCartOwner(true);  
 
   uint16_t exmemcnt_pre = REG_EXMEMCNT ;
@@ -122,7 +125,10 @@ void RunGBAROMTests()
   UnlockAllDCache() ;
   UnlockAllICache() ;
 
-  CP15_SetRegion6(0x08000035); // 128MB
+  SetFastClock(true);
+  if (GetCPUClockMultiplier() == 4)
+    CP15_SetRegion6(0x08000035); // 128MB
+
   sysSetCartOwner(true);  
 
   uint16_t exmemcnt_pre = REG_EXMEMCNT ;
