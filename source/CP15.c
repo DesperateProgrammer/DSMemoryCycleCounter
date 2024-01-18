@@ -303,6 +303,52 @@ void UnlockAllDCache()
     );
 }
 
+
+void WriteDCacheLockDown(uint32_t val)
+{
+  asm(
+      "mcr  p15, 0, %0, c9, c0, 0       \n"
+      :
+      : "r" (val)
+      : 
+    );
+}
+
+uint32_t ReadDCacheLockDown()
+{
+  uint32_t val = 0;
+  asm(
+      "mcr  p15, 0, %0, c9, c0, 0       \n"
+      : "=r" (val)
+      :
+      : 
+    );
+  return val;
+}
+
+
+void WriteICacheLockDown(uint32_t val)
+{
+  asm(
+      "mcr  p15, 0, %0, c9, c0, 1       \n"
+      :
+      : "r" (val)
+      : 
+    );
+}
+
+uint32_t ReadICacheLockDown()
+{
+  uint32_t val = 0;
+  asm(
+      "mcr  p15, 0, %0, c9, c0, 1       \n"
+      : "=r" (val)
+      :
+      : 
+    );
+  return val;
+}
+
 void UnlockAllICache() 
 {
   asm("eor	r0, r0, r0                  \n"

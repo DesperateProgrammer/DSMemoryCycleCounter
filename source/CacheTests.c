@@ -113,6 +113,23 @@ uint32_t MeasureICacheLineSize()
   return 0;
 }
 
+uint8_t MeasureICacheAssociativity()
+{
+  for (int i=0;i<31;i++)
+  {
+    WriteICacheLockDown(0x80000000 | (1 << i));
+    if ((ReadICacheLockDown() & (1 << i)) == 0)
+    {
+      // this bit was not setable.
+      // so the associative way does not exist
+      WriteICacheLockDown(0);
+      return i;
+    }
+  }
+  WriteICacheLockDown(0);
+  return 31;
+}
+
 /* 
     We measure the data cache size by running chains of data read instructions
     from non instruction cached main memory for several repeats. The 
@@ -218,6 +235,23 @@ uint32_t MeasureDCacheLineSize()
   return 0;
 }
 
+uint8_t MeasureDCacheAssociativity()
+{
+  for (int i=0;i<31;i++)
+  {
+    WriteDCacheLockDown(0x80000000 | (1 << i));
+    if ((ReadDCacheLockDown() & (1 << i)) == 0)
+    {
+      // this bit was not setable.
+      // so the associative way does not exist
+      WriteDCacheLockDown(0);
+      return i;
+    }
+  }
+  WriteDCacheLockDown(0);
+  return 31;
+}
+
 /* Run all Cache-Tests and dispay their result */
 void RunCacheTests()
 {
@@ -235,10 +269,12 @@ void RunCacheTests()
   iprintf("Measured ICache Size: %lu\n", MeasureICacheSize());
   iprintf("Reported ICache Line: %lu\n", GetReportedICacheLineSize());
   iprintf("Measured ICache Line: %lu\n", MeasureICacheLineSize());
+  iprintf("CP Bits ICache Ways : %u\n", MeasureICacheAssociativity());
   iprintf("Reported DCache Size: %lu\n", GetReportedDCacheSize());
   iprintf("Measured DCache Size: %lu\n", MeasureDCacheSize());
   iprintf("Reported DCache Line: %lu\n", GetReportedDCacheLineSize());
   iprintf("Measured DCache Line: %lu\n", MeasureDCacheLineSize());
+  iprintf("CP Bits DCache Ways : %u\n", MeasureDCacheAssociativity());
       
   WaitForAnyKey();
 }

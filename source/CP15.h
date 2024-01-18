@@ -17,6 +17,11 @@ void EnableDCache() ;
 void UnlockAllDCache() ;
 void UnlockAllICache() ;
 
+void WriteDCacheLockDown(uint32_t val);
+uint32_t ReadDCacheLockDown();
+void WriteICacheLockDown(uint32_t val);
+uint32_t ReadICacheLockDown();
+
 uint32_t CP15_ReadRegister(uint8_t num, uint8_t opcode) ;
 uint32_t CP15_GetMainID();
 uint32_t CP15_GetCacheType();
