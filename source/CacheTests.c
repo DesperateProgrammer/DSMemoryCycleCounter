@@ -34,12 +34,12 @@ uint32_t MeasureICacheSize()
   settings.arg1 = 0;
   settings.instructionA = settings.instructionB = *(uint32_t *)&OPCODES_NOP;  
 
-  uint32_t timeeNeededLast = MedianOfMeasurements(7, (FUNC_SINGLEMEASUREMENT)&ExecuteInstructionTimingTest, &settings)  / (1 << 8);
+  uint32_t timeeNeededLast = MedianOfMeasurements(3, (FUNC_SINGLEMEASUREMENT)&ExecuteInstructionTimingTest, &settings)  / (1 << 8);
   
   for (int i=9;i<16;i++)
   {
     settings. stripeSize = (1 << i)-12;
-    uint32_t timeNeeded = MedianOfMeasurements(7, (FUNC_SINGLEMEASUREMENT)&ExecuteInstructionTimingTest, &settings)  / (1 << i);
+    uint32_t timeNeeded = MedianOfMeasurements(3, (FUNC_SINGLEMEASUREMENT)&ExecuteInstructionTimingTest, &settings)  / (1 << i);
     if (timeNeeded > timeeNeededLast * 12 / 10)
     {
       return 1 << (i-1) ;

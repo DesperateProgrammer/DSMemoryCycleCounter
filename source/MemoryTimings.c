@@ -1,6 +1,7 @@
 #include "MemoryTimings.h"
 #include "MedianMeasurements.h"
 #include "Opcodes.h"
+#include "Menu.h"
 #include "CP15.h"
 
 #include <stdlib.h>
@@ -10,6 +11,87 @@
 
 typedef void (* ZeroArgsFunc)();
 typedef void (* FourArgsFunc)(uint32_t arg0, uint32_t arg1, uint32_t arg2, uint32_t arg3);
+
+uint32_t ExecuteDMATimingTest(STRUCT_DMA_TIMING_TEST_SETTINGS *settings)
+{
+  // transfer from cycle counter to memory (consecutive)
+  // from the pattern of data we can derive the timing
+
+  DMA2_SRC = (uint32_t)&TIMER0_DATA;
+  DMA2_CR = settings->repeats | DMA_SRC_FIX; 
+  if (settings->bitWidth == 32)
+  {
+    DMA2_CR |= DMA_32_BIT;
+  } else
+  {
+    DMA2_CR |= DMA_16_BIT;    
+  }
+  if (settings->directionsUp)
+  {
+    DMA2_CR |= DMA_DST_INC;
+    DMA2_DEST = settings->address;
+  } else
+  {
+    DMA2_CR |= DMA_DST_DEC;
+    DMA2_DEST = settings->address + (settings->bitWidth / 8) * (settings->repeats-1);    
+  }
+
+  DC_FlushAll();
+  IC_InvalidateAll();
+  REG_IME = 0 ;
+  cpuEndTiming();
+  TIMER0_DATA = 0;
+  TIMER1_DATA = 0;
+  cpuStartTiming(0) ;
+  DMA2_CR |= DMA_ENABLE;
+  do 
+  {
+    asm volatile ("mov r8, r8\nmov r8, r8\n");
+  } while (DMA2_CR & DMA_BUSY);
+  // for more then 16 bits resolution, we take the coarse value
+  // from the timers after the run by the cpu
+  // and lower 16 bit from the dma'd values
+  uint32_t end = cpuEndTiming();
+  REG_IME = 1 ;
+
+  DC_FlushAll();
+
+  uint16_t first;
+  uint16_t last ;
+  if (settings->directionsUp)
+  {
+    if (settings->bitWidth == 16)
+    {
+      first = ((uint16_t *)settings->address)[0];
+      last = ((uint16_t *)settings->address)[settings->repeats-1];
+    } else
+    {
+      first = ((uint32_t *)settings->address)[0];
+      last = ((uint32_t *)settings->address)[settings->repeats-1];      
+    }
+  } else
+  {
+    if (settings->bitWidth == 16)
+    {
+      last = ((uint16_t *)settings->address)[0];
+      first = ((uint16_t *)settings->address)[settings->repeats-1];
+    } else
+    {
+      last = ((uint32_t *)settings->address)[0];
+      first = ((uint32_t *)settings->address)[settings->repeats-1];      
+    }
+  }
+
+  if ((end & ~0xFFFF) && (last > (end & 0xFFFF)))
+  {
+    end = ((end & ~0xffff) - 0x10000) + last - first;
+  } else
+  {
+    end = (end & ~0xffff) + last - first;
+  }
+
+  return end;
+}
 
 uint32_t ExecuteInstructionTimingTest(STRUCT_INSTRUCTION_TIMING_TEST_SETTINGS *settings)
 {

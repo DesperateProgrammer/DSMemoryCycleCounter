@@ -81,6 +81,32 @@ void RunMainMemoryTests()
     iprintf("66MHz not available (unknown HW)\n");
   }
   SetFastClock(true);  
+
+  uint32_t data = (uint32_t)malloc(16*1024);
+  STRUCT_DMA_TIMING_TEST_SETTINGS settings;
+  settings.repeats = 4096;
+  settings.address = data;
+  settings.directionsUp = 1;
+  settings.bitWidth = 16;
+  int16_t DMAseq16 =MedianOfMeasurements(7, (FUNC_SINGLEMEASUREMENT)&ExecuteDMATimingTest, &settings) / 4095;
+  printf("DMA 16 up: %3i\n", DMAseq16);
+  settings.directionsUp = 1;
+  settings.bitWidth = 32;
+  int16_t DMAnon16 =MedianOfMeasurements(7, (FUNC_SINGLEMEASUREMENT)&ExecuteDMATimingTest, &settings) / 4095;
+  printf("DMA 16 down: %3i\n", DMAnon16);
+  settings.directionsUp = 0;
+  settings.bitWidth = 16;
+  int16_t DMAseq32 =MedianOfMeasurements(7, (FUNC_SINGLEMEASUREMENT)&ExecuteDMATimingTest, &settings) / 4095;
+  printf("DMA 32 up: %3i\n", DMAseq32);
+  settings.directionsUp = 0;
+  settings.bitWidth = 32;
+  int16_t DMAnon32 =MedianOfMeasurements(7, (FUNC_SINGLEMEASUREMENT)&ExecuteDMATimingTest, &settings) / 4095;
+  printf("DMA 32 down: %3i\n", DMAnon32);
+  free((void *)data);
+
+  WaitForAnyKey();
+
+
   
   consoleClear();
   iprintf("        Main Memory Timings     ");
@@ -96,6 +122,7 @@ void RunMainMemoryTests()
   iprintf("        N16   S16   N32   S32\n");
   iprintf(" 66Mhz  %3i   %3i   %3i   %3i\n", R16_66 / 2, (R16_66 - 2 *(R16_66-R16x2_66)) / 2, R32_66 / 2, (R32x2_66-R32_66) / 2);
   iprintf("133Mhz  %3i   %3i   %3i   %3i\n", R16_133 / 4, (R16_133 - 2 *(R16_133-R16x2_133)) / 4, R32_133 / 4, (R32x2_133-R32_133) / 4);
+  iprintf("  DMA   %3i   %3i   %3i   %3i\n", DMAnon16, DMAseq16, DMAnon32, DMAseq32);
   
   WaitForAnyKey();
 
