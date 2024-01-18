@@ -38,6 +38,7 @@ uint32_t CP15_GetRegion6() ;
 uint32_t CP15_GetRegion7() ;
 
 uint32_t CP15_SetRegion6(uint32_t val);
+uint32_t GetCacheDirtyStatus();
 
 #ifdef __cplusplus
 }

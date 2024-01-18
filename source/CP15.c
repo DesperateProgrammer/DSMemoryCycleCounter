@@ -358,3 +358,15 @@ void UnlockAllICache()
       : "r0"
     );
 }
+
+inline uint32_t GetCacheDirtyStatus()
+{
+  uint32_t val = 0;
+  asm(
+      "mcr  p15, 0, %0, c7, c10, 6       \n"
+      : "=r" (val)
+      :
+      : 
+    );
+  return val;
+}

@@ -252,6 +252,20 @@ uint8_t MeasureDCacheAssociativity()
   return 31;
 }
 
+bool TestCacheDirtyStatus()
+{
+  EnableICache();
+  EnableDCache();
+  volatile int target = 0 ;
+  REG_IME = 0;
+  DC_FlushAll();
+  register uint32_t statusPRE = GetCacheDirtyStatus() ;
+  target = 1;
+  register uint32_t statusPOST = GetCacheDirtyStatus() ;
+  REG_IME = 1;
+  return ((statusPRE & 1) == 0) && ((statusPOST & 1) != 0) && (target == 1);
+}
+
 /* Run all Cache-Tests and dispay their result */
 void RunCacheTests()
 {
@@ -275,6 +289,8 @@ void RunCacheTests()
   iprintf("Reported DCache Line: %lu\n", GetReportedDCacheLineSize());
   iprintf("Measured DCache Line: %lu\n", MeasureDCacheLineSize());
   iprintf("CP Bits DCache Ways : %u\n", MeasureDCacheAssociativity());
+  iprintf("\n");
+  iprintf("Cache Dirty bit: %s\n", TestCacheDirtyStatus()?"OK":"N.A.");
       
   WaitForAnyKey();
 }
