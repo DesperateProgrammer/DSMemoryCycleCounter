@@ -170,6 +170,17 @@ uint32_t __attribute__((naked)) CP15_SetRegion6(uint32_t val)
   );
 }
 
+uint32_t __attribute__((naked)) CP15_SetRegion3(uint32_t val)
+{
+  asm(
+    "mcr  p15, 0, r0, c6, c3, 0      \n"
+    "mrc  p15, 0, r0, c6, c3, 0       \n"
+    "bx lr                            \n"
+    : 
+    :
+  );
+}
+
 
 uint32_t CP15_ReadRegister(uint8_t num, uint8_t opcode) 
 {
@@ -282,6 +293,28 @@ void EnableICache()
     );
 }
 
+void EnableRoundRobinCache()
+{
+  asm("mrc  p15, 0, r0, c1, c0, 0       \n"
+      "orr  r0, r0, #0x4000             \n"
+      "mcr  p15, 0, r0, c1, c0, 0       \n"
+      :
+      :
+      : "r0"
+    );
+}
+
+void DisableRoundRobinCache()
+{
+  asm("mrc  p15, 0, r0, c1, c0, 0       \n"
+      "bic  r0, r0, #0x4000             \n"
+      "mcr  p15, 0, r0, c1, c0, 0       \n"
+      :
+      :
+      : "r0"
+    );
+}
+
 void EnableDCache()
 {
   asm("mrc	p15, 0, r0, c1, c0, 0       \n"
@@ -369,4 +402,116 @@ inline uint32_t GetCacheDirtyStatus()
       : 
     );
   return val;
+}
+
+
+inline void WriteCacheDebugIndexRegister(uint32_t val)
+{
+  asm(
+      "mcr  p15, 3, %0, c15, c0, 0       \n"
+      :
+      : "r" (val)
+      : 
+    );
+}
+
+inline uint32_t ReadCacheDebugIndexRegister()
+{
+  uint32_t val = 0;
+  asm(
+      "mcr  p15, 3, %0, c15, c0, 0       \n"
+      : "=r" (val)
+      :
+      : 
+    );
+  return val;  
+}
+
+inline void WriteInstructionCacheTagRegister(uint32_t val)
+{
+  asm(
+      "mcr  p15, 3, %0, c15, c1, 0       \n"
+      :
+      : "r" (val)
+      : 
+    );
+}
+
+inline uint32_t ReadInstructionCacheTagRegister()
+{
+  uint32_t val = 0;
+  asm(
+      "mrc  p15, 3, %0, c15, c1, 0       \n"
+      : "=r" (val)
+      :
+      : 
+    );
+  return val;  
+}
+
+inline void WriteDataCacheTagRegister(uint32_t val)
+{
+  asm(
+      "mcr  p15, 3, %0, c15, c2, 0       \n"
+      :
+      : "r" (val)
+      : 
+    );
+}
+
+inline uint32_t ReadDataCacheTagRegister()
+{
+  uint32_t val = 0;
+  asm(
+      "eor %0, %0, %0                    \n"
+      "mrc  p15, 3, %0, c15, c2, 0       \n"
+      : "=r" (val)
+      :
+      : 
+    );
+  return val;  
+}
+
+inline void WriteInstructionCacheRegister(uint32_t val)
+{
+  asm(
+      "mcr  p15, 3, %0, c15, c3, 0       \n"
+      :
+      : "r" (val)
+      : 
+    );
+}
+
+inline uint32_t ReadInstructionCacheRegister()
+{
+  uint32_t val = 0;
+  asm(
+      "mrc  p15, 3, %0, c15, c3, 0       \n"
+      : "=r" (val)
+      :
+      : 
+    );
+  return val;  
+}
+
+inline void WriteDataCacheRegister(uint32_t val)
+{
+  asm(
+      "mcr  p15, 3, %0, c15, c4, 0       \n"
+      :
+      : "r" (val)
+      : 
+    );
+}
+
+inline uint32_t ReadDataCacheRegister()
+{
+  uint32_t val = 0;
+  asm(
+      "mrc  p15, 3, %0, c15, c4, 0       \n"
+      : "=r" (val)
+      :
+      : 
+    );
+  return val;  
 }

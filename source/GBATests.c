@@ -125,9 +125,7 @@ void RunGBAROMTests()
   UnlockAllDCache() ;
   UnlockAllICache() ;
 
-  SetFastClock(true);
-  if (GetCPUClockMultiplier() == 4)
-    CP15_SetRegion6(0x08000035); // 128MB
+  CP15_SetRegion3(0x08000035); // 128MB
 
   sysSetCartOwner(true);  
 

@@ -103,10 +103,6 @@ void RunMainMemoryTests()
   int16_t DMAnon32 =MedianOfMeasurements(7, (FUNC_SINGLEMEASUREMENT)&ExecuteDMATimingTest, &settings) / 4095;
   printf("DMA 32 down: %3i\n", DMAnon32);
   free((void *)data);
-
-  WaitForAnyKey();
-
-
   
   consoleClear();
   iprintf("        Main Memory Timings     ");

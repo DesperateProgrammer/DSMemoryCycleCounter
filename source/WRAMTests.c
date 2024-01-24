@@ -28,6 +28,9 @@ void RunWRAMTests()
   UnlockAllDCache() ;
   UnlockAllICache() ;
 
+  CP15_SetRegion3(0x03000035); // 128MB
+
+
   consoleClear();
   iprintf("           WRAM Timings         ");
   iprintf("--------------------------------");  
@@ -49,15 +52,15 @@ void RunWRAMTests()
   SetFastClock(true);
   if (GetCPUClockMultiplier() == 4)
   {
-    R08_133 = MeasureDataAccess(0x03000000, DATAACCESS_READ | DATAACCESS_8) * GetCPUClockMultiplier() / 4;
+    R08_133 = MeasureDataAccess(0x37F8000, DATAACCESS_READ | DATAACCESS_8) * GetCPUClockMultiplier() / 4;
     iprintf(" 8b   Reads: %i\n", R08_133);
-    R16_133 = MeasureDataAccess(0x03000000, DATAACCESS_READ | DATAACCESS_16) * GetCPUClockMultiplier() / 4;
+    R16_133 = MeasureDataAccess(0x37F8000, DATAACCESS_READ | DATAACCESS_16) * GetCPUClockMultiplier() / 4;
     iprintf("16b   Reads: %i\n", R16_133);
-    R16x2_133 = MeasureDataAccess(0x03000000, DATAACCESS_READ | DATAACCESS_16x2) * GetCPUClockMultiplier() / 4;
+    R16x2_133 = MeasureDataAccess(0x37F8000, DATAACCESS_READ | DATAACCESS_16x2) * GetCPUClockMultiplier() / 4;
     iprintf("16bx2 Reads: %i\n", R16x2_133);
-    R32_133 = MeasureDataAccess(0x03000000, DATAACCESS_READ | DATAACCESS_32) * GetCPUClockMultiplier() / 4;
+    R32_133 = MeasureDataAccess(0x37F8000, DATAACCESS_READ | DATAACCESS_32) * GetCPUClockMultiplier() / 4;
     iprintf("32b   Reads: %i\n", R32_133);
-    R32x2_133 = MeasureDataAccess(0x03000000, DATAACCESS_READ | DATAACCESS_64) * GetCPUClockMultiplier() / 4;
+    R32x2_133 = MeasureDataAccess(0x37F8000, DATAACCESS_READ | DATAACCESS_64) * GetCPUClockMultiplier() / 4;
     iprintf("32bx2 Reads: %i\n", R32x2_133);
   } else
   {
@@ -67,15 +70,15 @@ void RunWRAMTests()
   SetFastClock(false);
   if (GetCPUClockMultiplier() == 2)
   {
-    R08_66 = MeasureDataAccess(0x03000000, DATAACCESS_READ | DATAACCESS_8) * GetCPUClockMultiplier() / 4;
+    R08_66 = MeasureDataAccess(0x37F8000, DATAACCESS_READ | DATAACCESS_8) * GetCPUClockMultiplier() / 4;
     iprintf(" 8b   Reads: %i\n", R08_66);
-    R16_66 = MeasureDataAccess(0x03000000, DATAACCESS_READ | DATAACCESS_16) * GetCPUClockMultiplier() / 4;
+    R16_66 = MeasureDataAccess(0x37F8000, DATAACCESS_READ | DATAACCESS_16) * GetCPUClockMultiplier() / 4;
     iprintf("16b   Reads: %i\n", R16_66);
-    R16x2_66 = MeasureDataAccess(0x03000000, DATAACCESS_READ | DATAACCESS_16x2) * GetCPUClockMultiplier() / 4;
+    R16x2_66 = MeasureDataAccess(0x37F8000, DATAACCESS_READ | DATAACCESS_16x2) * GetCPUClockMultiplier() / 4;
     iprintf("16bx2 Reads: %i\n", R16x2_66);
-    R32_66 = MeasureDataAccess(0x03000000, DATAACCESS_READ | DATAACCESS_32) * GetCPUClockMultiplier() / 4;
+    R32_66 = MeasureDataAccess(0x37F8000, DATAACCESS_READ | DATAACCESS_32) * GetCPUClockMultiplier() / 4;
     iprintf("32b   Reads: %i\n", R32_66);
-    R32x2_66 = MeasureDataAccess(0x03000000, DATAACCESS_READ | DATAACCESS_64) * GetCPUClockMultiplier() / 4;
+    R32x2_66 = MeasureDataAccess(0x37F8000, DATAACCESS_READ | DATAACCESS_64) * GetCPUClockMultiplier() / 4;
     iprintf("32bx2 Reads: %i\n", R32x2_66);
   } else
   {

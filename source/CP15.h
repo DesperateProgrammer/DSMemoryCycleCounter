@@ -38,7 +38,22 @@ uint32_t CP15_GetRegion6() ;
 uint32_t CP15_GetRegion7() ;
 
 uint32_t CP15_SetRegion6(uint32_t val);
+uint32_t CP15_SetRegion3(uint32_t val);
 uint32_t GetCacheDirtyStatus();
+
+void WriteCacheDebugIndexRegister(uint32_t val);
+uint32_t ReadCacheDebugIndexRegister();
+void WriteInstructionCacheTagRegister(uint32_t val);
+uint32_t ReadInstructionCacheTagRegister();
+void WriteDataCacheTagRegister(uint32_t val);
+uint32_t ReadDataCacheTagRegister();
+void WriteInstructionCacheRegister(uint32_t val);
+uint32_t ReadInstructionCacheRegister();
+void WriteDataCacheRegister(uint32_t val);
+uint32_t ReadDataCacheRegister();
+
+void EnableRoundRobinCache();
+void DisableRoundRobinCache();
 
 #ifdef __cplusplus
 }
